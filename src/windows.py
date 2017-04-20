@@ -19,14 +19,12 @@ database_path = '../data/wifi.sqlite'
 def signals_windows():
     """Get wifi signals on windows."""
     command = 'netsh wlan show networks mode=bssid'
-    a = subprocess.check_output(command.split(), shell=False)
+    #a = subprocess.check_output(command.split(), shell=False)
+    a = subprocess.getoutput(command.split())
     b = str(a)
-    c = str.split(b, '\\r\\n\\r\\n')
-    e = [re.findall('[0-9a-z\:]+\:[0-9a-z\:]+', d) for d in c][1:-1]
-    f = [re.findall('(\w+)%', d) for d in c][1:-1]
-    e2 = [i for [i] in e]
-    f2 = [i for [i] in f]
-    df = pd.DataFrame({'bssid': e2, 'signal': f2})
+    e = re.findall('[0-9a-z\:]+\:[0-9a-z\:]+', b)
+    f = re.findall('(\w+)%', b)
+    df = pd.DataFrame({'bssid': e, 'signal': f})
     return df
 
 
@@ -60,20 +58,39 @@ def log_location():
     print('Logging location "%s" ... ' % location)
     log_signals(location=location)
 
-def read_log_from_db(db=database_path):
+
+def read_log_from_db(db=database_path, drop_na=False):
     """Read signal log as dataframe."""
     con = sqlite3.connect(db)
     df = pd.read_sql('SELECT * FROM windows', con=con)
     con.close()
+    if drop_na:
+        df = df.dropna(axis='index', how='any')  # only complete rows, e.g. w/ locations    
     return df
-    
+
+
 def get_feature_matrix():
-    """Create feature matrix from signal log"""
-    df = read_log_from_db()
-    # TODO
-    return df
+    """
+    Create feature matrix from signal log, sorted by timestamp.
     
+    Returns only those entries based on complete observations (e.g. having labels).
+    """
+    df = read_log_from_db(drop_na=True)
+    df = df.pivot(index='timestamp', columns='bssid', values='signal')
+    df = df.sort_index()
+    return df
+
+
+def get_labels():
+    """Return location labels for timestamps."""
+    df = read_log_from_db(drop_na=True)
+    df = df[['timestamp', 'location']]
+    df = df.drop_duplicates()
+    df = df.set_index('timestamp')
+    df = df.sort_index()
+    return df
+
 
 print(get_feature_matrix())
+print(get_labels())
     
-    # log_location()
