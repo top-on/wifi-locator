@@ -19,8 +19,8 @@ database_path = '../data/wifi.sqlite'
 def signals_windows():
     """Get wifi signals on windows."""
     command = 'netsh wlan show networks mode=bssid'
-    #a = subprocess.check_output(command.split(), shell=False)
-    a = subprocess.getoutput(command.split())
+    a = subprocess.check_output(command.split(), shell=False)
+    #a = subprocess.getoutput(command.split())
     b = str(a)
     e = re.findall('[0-9a-z\:]+\:[0-9a-z\:]+', b)
     f = re.findall('(\w+)%', b)
@@ -91,6 +91,10 @@ def get_labels():
     return df
 
 
+#log_location()
+    
 print(get_feature_matrix())
-print(get_labels())
+#y = get_labels()
+#print(x)
+#print(y)
     
