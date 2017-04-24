@@ -10,7 +10,6 @@ import pandas as pd
 import sqlite3
 import datetime
 
-
 # locations that can be logged
 locations = ['traveling', 'living_room', 'kitchen', 'bedroom', 'bathroom']
 database_path = '../data/wifi.sqlite'
@@ -78,6 +77,8 @@ def get_feature_matrix():
     df = read_log_from_db(drop_na=True)
     df = df.pivot(index='timestamp', columns='bssid', values='signal')
     df = df.sort_index()
+    # NaN to 0
+    df = df.fillna(0)
     return df
 
 
@@ -91,10 +92,6 @@ def get_labels():
     return df
 
 
-#log_location()
-    
-print(get_feature_matrix())
-#y = get_labels()
-#print(x)
-#print(y)
-    
+# log_location()
+
+
