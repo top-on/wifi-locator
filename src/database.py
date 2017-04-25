@@ -51,7 +51,7 @@ def get_location():
 
 def log_signals(db=database_path, location=None):
     """Log current wifi signals."""
-    df = signals_windows()
+    df = get_signals()
     df['timestamp'] = datetime.datetime.utcnow()
     df['location'] = location    
     write_signals_to_db(db, df)

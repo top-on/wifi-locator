@@ -21,7 +21,7 @@ def get_signals():
                     Currently, windows is supported' % operating_system)
 
 
-    def get_signals_windows():
+def get_signals_windows():
     """Get wifi signals on windows."""
     command = 'netsh wlan show networks mode=bssid'
     a = subprocess.check_output(command.split(), shell=False)
