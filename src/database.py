@@ -9,7 +9,7 @@ import pandas as pd
 import sqlite3
 import warnings
 
-from wifi import get_signals
+from wifi_utils import get_signals
 
 # locations that can be logged
 locations = ['traveling', 'living_room', 'kitchen', 'bedroom', 'bathroom']
@@ -36,7 +36,7 @@ def get_signal_matrix():
 def write_signals_to_db(db=database_path, df=None):
     """Write wifi signals to database."""
     con = sqlite3.connect(db)
-    df.to_sql(name='windows', con=con, flavor='sqlite', if_exists='append', index=False)
+    df.to_sql(name='windows', con=con, if_exists='append', index=False)
     con.close()
     
 

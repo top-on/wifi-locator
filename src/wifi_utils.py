@@ -10,15 +10,32 @@ import pandas as pd
 import re
 import subprocess
 
+
 def get_signals():
     """Get wifi signals."""
     # TODO: determine operating system
     operating_system = os.name
     if operating_system == 'nt':
         return get_signals_windows()
+    if operating_system == 'posix':
+        return get_signals_linux()
     # here: no matching operating system
     raise Exception('Your operating system ("%s") is not supported. \
                     Currently, windows is supported' % operating_system)
+
+
+def get_signals_linux():   
+    """Get wifi signals on linux."""
+    command = 'nmcli dev wifi list'
+    a = subprocess.check_output(command.split())
+    a = str(a)
+    
+    bssids = re.findall('[0-9A-Z]{2}:[\wA-Z\:]+', a)
+    bssids = [bssid.lower() for bssid in bssids]    
+    signals = re.findall('MB/s\s+([0-9]+)', a)
+
+    df = pd.DataFrame({'bssid': bssids, 'signal': signals})    
+    return df
 
 
 def get_signals_windows():
@@ -33,19 +50,5 @@ def get_signals_windows():
     return df
 
     
-# TODO: get it working for linux
-#def get_signals_linux():
-#    
-#    a = subprocess.check_output(['nmcli', 'dev', 'wifi'])
-#    
-#    a = str(a)
-#    b = str.split(a, '\\n')
-#    
-#    r1 = [re.findall('[0-9A-Z]{2}:[\wA-Z\:]+', c) for c in b][1:-1]
-#    r2 = [re.findall('MB/s\s+(\w+)\s', c) for c in b][1:-1]
-#    
-#    r3 = [i for [i] in r1]
-#    r4 = [i for [i] in r2]
-#
-#    # TODO: make BSSID lower case
-#    # TODO: check if signal strength needs to be transformed
+if __name__ == '__main__':
+    print(get_signals())
