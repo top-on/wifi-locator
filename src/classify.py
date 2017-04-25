@@ -42,11 +42,8 @@ def evaluate_model(model_name, model, x, y):
 def predict(model, signal_matrix):
     """Predict current location, including classifier voting."""
     model.fit(x, y.values.ravel())
+    # TODO: use more classifiers and let them take a (hard) vote
     return model.predict(signal_matrix)[0]
-    
-    # TODO: combine classifiers
-    #vc = VotingClassifier(classifiers.items(), n_jobs=1)
-    #evaluate_model('VotingClassifier', vc, x, y)    
 
     
 def classify_current_signal():

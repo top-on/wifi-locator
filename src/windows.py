@@ -111,6 +111,4 @@ def get_labels():
 
 if __name__ == '__main__':
     # log location
-    #log_location()
-    df = get_signal_matrix()
-    print(df)
+    log_location()
