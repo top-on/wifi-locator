@@ -4,11 +4,12 @@ Store wifi signals to SQLite.
 @author: DETJENS2
 """
 
-import subprocess
-import re
-import pandas as pd
-import sqlite3
 import datetime
+import pandas as pd
+import re
+import sqlite3
+import subprocess
+import warnings
 
 # locations that can be logged
 locations = ['traveling', 'living_room', 'kitchen', 'bedroom', 'bathroom']
@@ -25,8 +26,25 @@ def signals_windows():
     f = re.findall('(\w+)%', b)
     df = pd.DataFrame({'bssid': e, 'signal': f})
     return df
+    
+    
+def get_signal_matrix():
+    x = get_feature_matrix()
+    df = pd.DataFrame(data=None, columns=x.columns, index=[0])
+    df.ix[:,:] = 0
+    s = signals_windows()
+    for bssid in s.bssid:
+        if bssid not in df.columns:
+            warnings.warn('Ignoring bssid that is not in historic data. \
+                          Consider generating more training data with log_location()')
+            next
+        df.loc[0, bssid] = s[s.bssid == bssid].signal.values[0]
+    # if dataframe all zeros, throw exception and inform user
+    if (df.values == 0).all():
+        raise Exception('None of current wifi hotspots found in training data.')
+    return df
 
-
+    
 def write_signals_to_db(db=database_path, df=None):
     """Write wifi signals to database."""
     con = sqlite3.connect(db)
@@ -93,4 +111,6 @@ def get_labels():
 
 if __name__ == '__main__':
     # log location
-    log_location()
+    #log_location()
+    df = get_signal_matrix()
+    print(df)
