@@ -1,9 +1,11 @@
-# -*- coding: utf-8 -*-
 """
 Created on Mon Apr 24 07:15:05 2017
 
 @author: DETJENS2
 """
+
+from collections import Counter
+from random import randrange
 
 import numpy as np
 
@@ -41,10 +43,30 @@ def evaluate_model(model_name, model, x, y):
     
 def predict(model, signal_matrix):
     """Predict current location, including classifier voting."""
-    model.fit(x, y.values.ravel())
-    # TODO: use more classifiers and let them take a (hard) vote
-    return model.predict(signal_matrix)[0]
+    for model in classifiers.values():
+        model.fit(x, y.values.ravel())
+     
+    locations = []
+    for key in classifiers.keys():
+        model = classifiers[key]
+        location = model.predict(signal_matrix)[0]
+        print('Model "%s": %s' % (key, location))
+        locations.append(location)
 
+    # get most frequent prediction
+    count = Counter(locations)
+    max_count = max(count.values())
+    max_locations = []
+    for key in count.keys():
+        value = count[key]
+        if value == max_count:
+            max_locations.append(key)
+    rand_index = randrange(0,len(max_locations))
+    max_location = max_locations[rand_index]
+    
+    print('Hard voting result: %s' % max_location)    
+    return max_location
+ 
     
 def classify_current_signal():
     """Predict location label for current wifi signals."""
@@ -62,4 +84,3 @@ if __name__ == '__main__':
 #        evaluate_model(name, classifiers[name], x, y)        
     # predict current position
     location = classify_current_signal()
-    print(location)
