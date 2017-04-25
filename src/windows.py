@@ -6,33 +6,21 @@ Store wifi signals to SQLite.
 
 import datetime
 import pandas as pd
-import re
 import sqlite3
-import subprocess
 import warnings
+
+from wifi import get_signals
 
 # locations that can be logged
 locations = ['traveling', 'living_room', 'kitchen', 'bedroom', 'bathroom']
 database_path = '../data/wifi.sqlite'
-
-
-def signals_windows():
-    """Get wifi signals on windows."""
-    command = 'netsh wlan show networks mode=bssid'
-    a = subprocess.check_output(command.split(), shell=False)
-    #a = subprocess.getoutput(command.split())
-    b = str(a)
-    e = re.findall('[0-9a-z\:]+\:[0-9a-z\:]+', b)
-    f = re.findall('(\w+)%', b)
-    df = pd.DataFrame({'bssid': e, 'signal': f})
-    return df
     
     
 def get_signal_matrix():
     x = get_feature_matrix()
     df = pd.DataFrame(data=None, columns=x.columns, index=[0])
     df.ix[:,:] = 0
-    s = signals_windows()
+    s = get_signals()
     for bssid in s.bssid:
         if bssid not in df.columns:
             warnings.warn('Ignoring bssid that is not in historic data. \
@@ -82,7 +70,7 @@ def read_log_from_db(db=database_path, drop_na=False):
     df = pd.read_sql('SELECT * FROM windows', con=con)
     con.close()
     if drop_na:
-        df = df.dropna(axis='index', how='any')  # only complete rows, e.g. w/ locations    
+        df = df.dropna(axis='index', how='any')  # only complete rows, e.g. w/ locations
     return df
 
 
