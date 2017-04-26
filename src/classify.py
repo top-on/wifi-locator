@@ -67,9 +67,8 @@ def predict(model, signal_matrix, verbose=1):
             max_locations.append(key)
     rand_index = randrange(0,len(max_locations))
     max_location = max_locations[rand_index]
-    
     if verbose > 0:
-        print('Hard voting result: %s' % max_location)    
+        print('Hard voting result: %s' % max_location)
     return max_location
  
     
