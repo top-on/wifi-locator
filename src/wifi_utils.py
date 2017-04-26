@@ -28,12 +28,10 @@ def get_signals_linux():
     """Get wifi signals on linux."""
     command = 'nmcli dev wifi list'
     a = subprocess.check_output(command.split())
-    a = str(a)
-    
-    bssids = re.findall('[0-9A-Z]{2}:[\wA-Z\:]+', a)
+    b = str(a)    
+    bssids = re.findall('[0-9A-Z]{2}:[\wA-Z\:]+', b)
     bssids = [bssid.lower() for bssid in bssids]    
-    signals = re.findall('MB/s\s+([0-9]+)', a)
-
+    signals = re.findall('MB/s\s+([0-9]+)', b)
     df = pd.DataFrame({'bssid': bssids, 'signal': signals})    
     return df
 
