@@ -25,7 +25,7 @@ def get_signal_matrix():
         if bssid not in df.columns:
             warnings.warn('Ignoring bssid that is not in historic data. \
                           Consider generating more training data with log_location()')
-            next
+            continue
         df.loc[0, bssid] = s[s.bssid == bssid].signal.values[0]
     # if dataframe all zeros, throw exception and inform user
     if (df.values == 0).all():

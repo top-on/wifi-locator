@@ -4,15 +4,17 @@ Created on Mon Apr 24 07:15:05 2017
 @author: DETJENS2
 """
 
-from collections import Counter
 from random import randrange
 
 import numpy as np
 
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import VotingClassifier
 from sklearn.ensemble.weight_boosting import AdaBoostClassifier
 from sklearn.model_selection import cross_val_score
+from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
 import time
@@ -28,11 +30,13 @@ classifiers = {'KNN': KNeighborsClassifier(n_neighbors=3, algorithm='auto',
                                            metric='braycurtis'),
                'RandForest': RandomForestClassifier(n_estimators=80, n_jobs=1),
                #'SVM': SVC(gamma=2, C=1),
-               #'linear SVM': SVC(kernel="linear", C=0.025),
+               'linear SVM': SVC(kernel="linear", C=0.025),
                'DecisionTree': DecisionTreeClassifier(max_depth=5),
                'AdaBoost': AdaBoostClassifier(n_estimators=80, learning_rate=0.4),
-               #'Naive Bayes': GaussianNB(),
+               'Naive Bayes': GaussianNB(),
                }
+
+vc = VotingClassifier(estimators=list(classifiers.items()), voting='hard')
 
 
 def evaluate_model(model_name, model, x, y):
@@ -42,40 +46,41 @@ def evaluate_model(model_name, model, x, y):
     print('CV f1_micro (not reusing data): %s' % np.mean(cross_val_score(model, x, 
           y.values.ravel(), cv=5, scoring='f1_micro')))
 
-    
-def predict(model, signal_matrix, verbose=1):
-    """Predict current location, including classifier voting."""
-    # TODO: classify based on *balanced* sample (repeated sampling strategy)
-    for model in classifiers.values():
-        model.fit(x, y.values.ravel())
-     
-    locations = []
+
+def evaluate_all_models():
+    """Evalate all models via cross validation."""
+    # evaluate models
+    for name in classifiers.keys():
+        evaluate_model(name, classifiers[name], x, y)   
+    evaluate_model('VotingClassifier', vc, x, y)
+    # TODO: evaluate voting classifier, following demo_VotingClassifier.py
+
+
+def predict(signal_matrix, verbose=1):
+    """Predict current location, based on hard voting among ensemble of classifiers."""
+    # TODO: classify based on *balanced* sample (repeated sampling strategy)        
+    # report for models within VotingClassifier
     for key in classifiers.keys():
         model = classifiers[key]
+        model.fit(x, y.values.ravel())        
         location = model.predict(signal_matrix)[0]
         if verbose > 0:
             print('Model "%s": %s' % (key, location))
-        locations.append(location)
-
-    # get most frequent prediction
-    count = Counter(locations)
-    max_count = max(count.values())
-    max_locations = []
-    for key in count.keys():
-        value = count[key]
-        if value == max_count:
-            max_locations.append(key)
-    rand_index = randrange(0,len(max_locations))
-    max_location = max_locations[rand_index]
+    # report for VotingClassifier
+    vc.fit(x, y.values.ravel())
+    vc_locations = vc.predict(signal_matrix)
+    # in case VotingClassifier returns more than one result: always draw random element
+    rand_index = randrange(0,len(vc_locations))
+    vc_location = vc_locations[rand_index]
     if verbose > 0:
-        print('Hard voting result: %s' % max_location)
-    return max_location
+        print('VotingClassifier result: %s' % vc_location)
+    return vc_location
  
     
 def classify_current_signal():
     """Predict location label for current wifi signals."""
     signal_matrix = get_signal_matrix()
-    return predict(classifiers['KNN'], signal_matrix)
+    return predict(signal_matrix)
 
 
 def stream_location():
@@ -86,12 +91,6 @@ def stream_location():
 
     
 if __name__ == '__main__':
-#    x = get_feature_matrix()
-#    print(x)
-#    s = signals_windows()
-#    print(s)
-    # evaluate models
-#    for name in classifiers.keys():
-#        evaluate_model(name, classifiers[name], x, y)        
-    # predict current position
-    location = classify_current_signal()
+    # evaluate_all_models()
+    classify_current_signal()
+    #stream_location()
