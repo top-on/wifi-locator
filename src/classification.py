@@ -25,7 +25,7 @@ from database import get_feature_matrix, get_labels, get_signal_matrix
 # historial data
 x = get_feature_matrix()
 y = get_labels()
-# define models
+# classification models
 classifiers = {'KNN': KNeighborsClassifier(n_neighbors=3, algorithm='auto',
                                            metric='braycurtis'),
                'RandForest': RandomForestClassifier(n_estimators=80, n_jobs=1),
@@ -35,7 +35,6 @@ classifiers = {'KNN': KNeighborsClassifier(n_neighbors=3, algorithm='auto',
                'AdaBoost': AdaBoostClassifier(n_estimators=80, learning_rate=0.4),
                'Naive Bayes': GaussianNB(),
                }
-
 vc = VotingClassifier(estimators=list(classifiers.items()), voting='hard')
 
 
@@ -53,7 +52,6 @@ def evaluate_all_models():
     for name in classifiers.keys():
         evaluate_model(name, classifiers[name], x, y)   
     evaluate_model('VotingClassifier', vc, x, y)
-    # TODO: evaluate voting classifier, following demo_VotingClassifier.py
 
 
 def predict(signal_matrix, verbose=1):

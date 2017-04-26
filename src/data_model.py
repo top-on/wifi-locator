@@ -97,6 +97,7 @@ def get_labels():
     df = df.sort_index()
     return df
 
+
 if __name__ == '__main__':
     # log location
     log_location()
