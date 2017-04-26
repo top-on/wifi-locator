@@ -30,7 +30,7 @@ def get_signals_linux():
     a = subprocess.check_output(command.split())
     b = str(a)    
     bssids = re.findall('[0-9A-Z]{2}:[\wA-Z\:]+', b)
-    bssids = [bssid.lower() for bssid in bssids]    
+    bssids = [bssid.lower() for bssid in bssids]
     signals = re.findall('MB/s\s+([0-9]+)', b)
     df = pd.DataFrame({'bssid': bssids, 'signal': signals})    
     return df
