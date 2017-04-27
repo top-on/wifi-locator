@@ -17,14 +17,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 
-import time
 
-from database import get_feature_matrix, get_labels, get_signal_matrix
-
-
-# historial data
-x = get_feature_matrix()
-y = get_labels()
 # classification models
 classifiers = {'KNN': KNeighborsClassifier(n_neighbors=3, algorithm='auto',
                                            metric='braycurtis'),
@@ -46,15 +39,7 @@ def evaluate_model(model_name, model, x, y):
           y.values.ravel(), cv=5, scoring='f1_micro')))
 
 
-def evaluate_all_models():
-    """Evalate all models via cross validation."""
-    # evaluate models
-    for name in classifiers.keys():
-        evaluate_model(name, classifiers[name], x, y)   
-    evaluate_model('VotingClassifier', vc, x, y)
-
-
-def predict(signal_matrix, verbose=1):
+def predict(x, y, signal_matrix, verbose=1):
     """Predict current location, based on hard voting among ensemble of classifiers."""
     # TODO: classify based on *balanced* sample (repeated sampling strategy)        
     # report for models within VotingClassifier
@@ -73,22 +58,3 @@ def predict(signal_matrix, verbose=1):
     if verbose > 0:
         print('VotingClassifier result: %s' % vc_location)
     return vc_location
- 
-    
-def classify_current_signal():
-    """Predict location label for current wifi signals."""
-    signal_matrix = get_signal_matrix()
-    return predict(signal_matrix)
-
-
-def stream_location():
-    """Continuously predict current location."""
-    while True:
-        print('PreLocation: %s \n' % classify_current_signal())
-        time.sleep(3)
-
-    
-if __name__ == '__main__':
-    # evaluate_all_models()
-    classify_current_signal()
-    #stream_location()
