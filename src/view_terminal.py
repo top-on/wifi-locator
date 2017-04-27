@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Apr 26 21:32:22 2017
+"""View functions that provide user interaction via terminal."""
 
-@author: DETJENS2
-"""
+from core_wifi_locator import log_location, evaluate_all_models, \
+                              predict_current_location, stream_location
 
-# TODO: 
-# - implement terminal view for user interaction here
-# - this module should only interact with 'presenter' wifi_locator.py
+if __name__ == '__main__':
+    """User interaction via terminal."""
+    # TODO
+    pass    
