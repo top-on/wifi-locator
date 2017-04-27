@@ -46,23 +46,11 @@ def stream_location():
         time.sleep(3)
 
 
-def log_location(verbose=1):
+def log_location(location):
     """Ask for location and log it, together with current wifi signals."""
-    def get_location():
-        """Get location from user (options in script parameters)."""
-        print('Where are you located?')
-        for i in range(0, len(locations)):
-            print("%i - %s" % (i, locations[i]))
-        k = int(input('location: '))
-        return locations[k]
-
     # read from sensors
     signals = get_signals()
-    # read form user input
-    location = get_location()
     # log location to model
-    if verbose > 0:
-        print('Logging location "%s" ... ' % location)
     log_signals(signals, location=location)
 
 
