@@ -1,8 +1,4 @@
-"""
-Created on Tue Apr 25 19:06:44 2017
-
-@author: DETJENS2
-"""
+"""Module that provides all wifi sensor functionality (i.e. returning scan)."""
 
 import os
 import pandas as pd
@@ -22,15 +18,15 @@ def get_signals():
                     Currently, windows is supported' % operating_system)
 
 
-def get_signals_linux():   
+def get_signals_linux():
     """Get wifi signals on linux."""
     command = 'nmcli dev wifi list'
     a = subprocess.check_output(command.split())
-    b = str(a)    
+    b = str(a)
     bssids = re.findall('[0-9A-Z]{2}:[\wA-Z\:]+', b)
     bssids = [bssid.lower() for bssid in bssids]
     signals = re.findall('MB/s\s+([0-9]+)', b)
-    df = pd.DataFrame({'bssid': bssids, 'signal': signals})    
+    df = pd.DataFrame({'bssid': bssids, 'signal': signals})
     return df
 
 
@@ -44,6 +40,6 @@ def get_signals_windows():
     df = pd.DataFrame({'bssid': e, 'signal': f})
     return df
 
-    
+
 if __name__ == '__main__':
     print(get_signals())
