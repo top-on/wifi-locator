@@ -29,6 +29,9 @@ def get_signals_linux():
     bssids = re.findall('[0-9A-Z]{2}:[\wA-Z\:]+', b)
     bssids = [bssid.lower() for bssid in bssids]
     signals = re.findall('MB/s\s+([0-9]+)', b)
+    if len(bssids) != len(signals):
+        print('bssid & signals of different length!')
+        return pd.DataFrame(columns=['bssid', 'signal'])
     df = pd.DataFrame({'bssid': bssids, 'signal': signals})
     return df
 

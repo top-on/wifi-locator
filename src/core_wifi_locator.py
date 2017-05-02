@@ -49,6 +49,10 @@ def log_location(location):
     """Ask for location and log it, together with current wifi signals."""
     # read from sensors
     signals = get_signals()
+    # treat case where not enough signals found
+    if signals.empty:
+        print('Not enough signals!')
+        return
     # log location to model
     log_signals(signals, location=location)
 
