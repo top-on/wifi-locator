@@ -12,7 +12,9 @@ def get_signals():
     if operating_system == 'nt':
         return get_signals_windows()
     if operating_system == 'posix':
-        return get_signals_linux()
+        df = get_signals_linux()
+        return df
+        
     # when here: no matching operating system
     raise Exception('Your operating system ("%s") is not supported. \
                     Currently, windows is supported' % operating_system)
@@ -20,8 +22,9 @@ def get_signals():
 
 def get_signals_linux():
     """Get wifi signals on linux."""
-    command = 'nmcli dev wifi list'
-    a = subprocess.check_output(command.split())
+    command = 'nmcli nm wifi off && sleep 5 && nmcli nm wifi on && \
+               sleep 5 && nmcli dev wifi list'
+    a = subprocess.check_output(command, shell=True)
     b = str(a)
     bssids = re.findall('[0-9A-Z]{2}:[\wA-Z\:]+', b)
     bssids = [bssid.lower() for bssid in bssids]
