@@ -1,9 +1,10 @@
 """Module that provides all wifi sensor functionality (i.e. returning scan)."""
 
 import os
-import pandas as pd
 import re
 import subprocess
+
+import pandas as pd
 
 
 def get_signals():
@@ -14,7 +15,7 @@ def get_signals():
     if operating_system == 'posix':
         df = get_signals_linux()
         return df
-        
+
     # when here: no matching operating system
     raise Exception('Your operating system ("%s") is not supported. \
                     Currently, windows is supported' % operating_system)

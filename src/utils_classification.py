@@ -1,7 +1,9 @@
 """Module provides classification of signals and evaluates models."""
 
 from random import randrange
+
 import numpy as np
+
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import VotingClassifier
 from sklearn.ensemble.weight_boosting import AdaBoostClassifier

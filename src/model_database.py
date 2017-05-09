@@ -1,8 +1,10 @@
 """Module that provides all connectivity to SQLite database."""
 
 import datetime
-import pandas as pd
 import sqlite3
+
+import pandas as pd
+
 
 database_path = '../data/wifi.sqlite'
 

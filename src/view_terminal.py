@@ -2,8 +2,9 @@
 
 import os
 import sys
-from core_wifi_locator import log_location, evaluate_all_models, \
-    predict_current_location, locations
+
+from core_wifi_locator import evaluate_all_models, locations, log_location, \
+    predict_current_location
 
 
 def main_menu():

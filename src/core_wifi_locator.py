@@ -4,12 +4,15 @@ Core module of wifi-locator.
 Views and APIs need to only import this module.
 """
 
-import time
 import sys
+import time
+
 from model_database import get_feature_matrix, get_labels, get_signal_matrix
 from model_database import log_signals
+
+from utils_classification import classifiers, evaluate_model, predict, vc
+
 from utils_wifi import get_signals
-from utils_classification import predict, evaluate_model, vc, classifiers
 
 # locations that can be logged
 locations = ['traveling', 'living_room', 'kitchen', 'bedroom', 'bathroom']
