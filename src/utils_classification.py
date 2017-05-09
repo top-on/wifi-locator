@@ -18,7 +18,7 @@ classifiers = {'K-Nearest Neighbors (Braycurtis norm)':
                                     metric='braycurtis'),
                'Random Forest':
                RandomForestClassifier(n_estimators=80, n_jobs=1),
-               # 'SVM': SVC(gamma=2, C=1),
+               'SVM': SVC(gamma=2, C=1),
                'Linear Support Vector Machine': SVC(kernel="linear", C=0.025),
                'Decision Tree': DecisionTreeClassifier(max_depth=5),
                'Ada Boost': AdaBoostClassifier(n_estimators=80,

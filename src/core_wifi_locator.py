@@ -5,6 +5,7 @@ Views and APIs need to only import this module.
 """
 
 import time
+import sys
 from model_database import get_feature_matrix, get_labels, get_signal_matrix
 from model_database import log_signals
 from utils_wifi import get_signals
@@ -20,9 +21,12 @@ def evaluate_all_models():
     x = get_feature_matrix()
     y = get_labels()
     # evaluate models
-    for name in classifiers.keys():
-        evaluate_model(name, classifiers[name], x, y)
-    evaluate_model('VotingClassifier', vc, x, y)
+    try:
+        for name in classifiers.keys():
+            evaluate_model(name, classifiers[name], x, y)
+        evaluate_model('VotingClassifier', vc, x, y)
+    except:
+        print("\nError at model evaluation: \n%s" % sys.exc_info()[1])
 
 
 def predict_current_location():
@@ -34,8 +38,11 @@ def predict_current_location():
     y_train = get_labels()
     x_signal = get_signal_matrix(x_train, signals)
     # classify signal
-    location = predict(x_train, y_train, x_signal)
-    return location
+    try:
+        location = predict(x_train, y_train, x_signal)
+        return location
+    except:
+        print("\nError at prediction: \n%s" % sys.exc_info()[1])
 
 
 def stream_location():
