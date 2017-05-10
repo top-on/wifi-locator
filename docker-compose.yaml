@@ -1,0 +1,8 @@
+version: "2"
+
+services:
+  app:
+    build: .
+    volumes:
+    # - ./src:/usr/src/app
+    - ./data:/usr/src/data
